@@ -1,0 +1,350 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Drawing Canvas */
+#drawingCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    cursor: none;
+    z-index: 1;
+}
+
+/* Custom Cursor */
+#cursor {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #667eea;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    transition: all 0.1s ease;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+}
+
+#cursor.drawing {
+    background: rgba(102, 126, 234, 0.3);
+    border-color: #764ba2;
+    box-shadow: 0 0 20px rgba(118, 75, 162, 0.8);
+    transform: translate(-50%, -50%) scale(1.3);
+}
+
+/* Control Panel */
+.control-panel {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    min-width: 250px;
+}
+
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.control-group input[type="color"] {
+    width: 100%;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.control-group input[type="range"] {
+    width: 150px;
+    margin-right: 10px;
+}
+
+.btn {
+    width: 100%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #667eea;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-danger {
+    background: #ef4444;
+}
+
+.btn-danger:hover {
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+}
+
+.btn-success {
+    background: #10b981;
+}
+
+.btn-success:hover {
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 15px 40px;
+    font-size: 18px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    background: #f3f4f6;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #333;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #6b7280;
+    animation: pulse 2s infinite;
+}
+
+.status-dot.active {
+    background: #10b981;
+}
+
+.status-dot.drawing {
+    background: #ef4444;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Camera Preview */
+.camera-preview {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 320px;
+    height: 240px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.camera-preview.minimized {
+    height: 45px;
+}
+
+.camera-preview.minimized .camera-content {
+    display: none;
+}
+
+.camera-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    cursor: move;
+    user-select: none;
+    color: white;
+    font-weight: 600;
+}
+
+.toggle-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 25px;
+    height: 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+.toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.camera-content {
+    position: relative;
+    width: 100%;
+    height: calc(100% - 45px);
+}
+
+#videoElement {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+}
+
+#handCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: scaleX(-1);
+}
+
+.resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: nwse-resize;
+    border-radius: 0 0 15px 0;
+}
+
+/* Instructions Overlay */
+.instructions {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.instructions.hidden {
+    display: none;
+}
+
+.instructions-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    max-width: 500px;
+    text-align: center;
+    animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.instructions-content h2 {
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 28px;
+}
+
+.instruction-item {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f3f4f6;
+    border-radius: 10px;
+}
+
+.instruction-item .emoji {
+    font-size: 32px;
+    margin-right: 15px;
+    min-width: 40px;
+}
+
+.instruction-item p {
+    color: #333;
+    margin: 0;
+}
+
+.instruction-item strong {
+    color: #667eea;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .control-panel {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        min-width: auto;
+    }
+    
+    .camera-preview {
+        width: 200px;
+        height: 150px;
+        bottom: 10px;
+        right: 10px;
+    }
+    
+    .instructions-content {
+        margin: 20px;
+        padding: 30px 20px;
+    }
+}

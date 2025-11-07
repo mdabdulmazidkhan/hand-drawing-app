@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Drawing App</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- MediaPipe Hands -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <!-- Drawing Canvas -->
+    <canvas id="drawingCanvas"></canvas>
+    
+    <!-- Cursor -->
+    <div id="cursor"></div>
+    
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <div class="control-group">
+            <label for="colorPicker">Color:</label>
+            <input type="color" id="colorPicker" value="#000000">
+        </div>
+        
+        <div class="control-group">
+            <label for="brushSize">Brush Size:</label>
+            <input type="range" id="brushSize" min="1" max="50" value="5">
+            <span id="brushSizeValue">5</span>px
+        </div>
+        
+        <div class="control-group">
+            <button id="eraserBtn" class="btn">
+                <span>🧹</span> Eraser
+            </button>
+        </div>
+        
+        <div class="control-group">
+            <button id="clearBtn" class="btn btn-danger">
+                <span>🗑️</span> Clear
+            </button>
+        </div>
+        
+        <div class="control-group">
+            <button id="saveBtn" class="btn btn-success">
+                <span>💾</span> Save
+            </button>
+        </div>
+        
+        <div class="status-indicator">
+            <span id="drawingStatus" class="status-dot"></span>
+            <span id="statusText">Ready</span>
+        </div>
+    </div>
+    
+    <!-- Floating Camera Preview -->
+    <div id="cameraPreview" class="camera-preview">
+        <div class="camera-header">
+            <span>📷 Camera</span>
+            <button id="toggleCamera" class="toggle-btn">−</button>
+        </div>
+        <div class="camera-content">
+            <video id="videoElement" autoplay playsinline></video>
+            <canvas id="handCanvas"></canvas>
+        </div>
+        <div class="resize-handle"></div>
+    </div>
+    
+    <!-- Instructions Overlay -->
+    <div id="instructions" class="instructions">
+        <div class="instructions-content">
+            <h2>✋ Hand Drawing Controls</h2>
+            <div class="instruction-item">
+                <span class="emoji">👆</span>
+                <p><strong>Move Cursor:</strong> Point with your index finger</p>
+            </div>
+            <div class="instruction-item">
+                <span class="emoji">🤏</span>
+                <p><strong>Draw:</strong> Pinch thumb and index finger together</p>
+            </div>
+            <div class="instruction-item">
+                <span class="emoji">🖌️</span>
+                <p><strong>Brush Size:</strong> Varies with pinch distance</p>
+            </div>
+            <div class="instruction-item">
+                <span class="emoji">🎨</span>
+                <p><strong>Change Color:</strong> Use the color picker panel</p>
+            </div>
+            <button id="startBtn" class="btn btn-primary">Start Drawing</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
